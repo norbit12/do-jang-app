@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "DoJang",
+  title: "DoJang 도장닷컴",
   description: "Your ultimate task master!",
   openGraph: {
     title: "DoJang",

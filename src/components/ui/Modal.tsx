@@ -32,7 +32,7 @@ interface ModalProps {
             <textarea
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            rows={4}
+            rows={7}
             placeholder="Enter text..."
             className="w-full border rounded-lg px-4 py-2 mb-4 border-slate-200 placeholder:text-slate-400 outline-none focus:border-slate-400 focus:ring-4 ring-slate-200 duration-200"
             />
