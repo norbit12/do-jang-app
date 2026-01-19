@@ -13,7 +13,11 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: "Inter", "Noto Sans JP", Arial, Helvetica, sans-serif;
+  font-family: "Inter", Arial, Helvetica, sans-serif;
+}
+
+:lang(ja) {
+  font-family: "Noto Sans JP", sans-serif;
 }
 
 .header-logo {
