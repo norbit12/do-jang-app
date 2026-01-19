@@ -1,6 +1,20 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+import { Inter, Noto_Sans_JP } from 'next/font/google';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const notoJP = Noto_Sans_JP({
+  subsets: ['latin'],
+  variable: '--font-noto-jp',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
   title: "DoJang 도장닷컴",
   description: "Your ultimate task master!",
@@ -29,7 +43,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={`${inter.variable} ${notoJP.variable}`}>{children}</body>
     </html>
   );
 }
