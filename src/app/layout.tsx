@@ -16,7 +16,7 @@ const notoJP = Noto_Sans_JP({
 });
 
 export const metadata: Metadata = {
-  title: "DoJang 도장닷컴",
+  title: "DoJang",
   description: "Your ultimate task master!",
   openGraph: {
     title: "DoJang",
