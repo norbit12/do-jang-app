@@ -165,7 +165,7 @@ export default function Home() {
           items.map((item, idx) => (
             <div
               key={item.id}
-              className="px-4 py-3 bg-slate-50 rounded-lg flex flex-col relative"
+              className="px-4 py-3 bg-slate-50 rounded-md border border-slate-100 flex flex-col relative"
             >
               <div className="relative">
                 <span className="text-sm mb-2 text-slate-400 block">
