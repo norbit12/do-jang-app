@@ -1,4 +1,4 @@
-![](https://raw.githubusercontent.com/ethan-mason/claro-list/refs/heads/main/public/og-image.png)
+![](https://raw.githubusercontent.com/norbit12/do-jang-app/refs/heads/main/public/ogimage.png)
 # DoJang - Your ultimate task master!
 It’s truly just a simple task manager! You can add, delete, and edit tasks!
 ## Run Locally
@@ -6,7 +6,7 @@ It’s truly just a simple task manager! You can add, delete, and edit tasks!
 Clone the project
 
 ```bash
-git clone https://link-to-project
+git clone https://github.com/norbit12/do-jang-app
 ```
 
 Go to the project directory
