@@ -12,12 +12,24 @@ import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import Footer from "@/components/Footer";
 import LoadingOverlay from "@/components/LoadingOverlay";
+import type { User } from "@supabase/supabase-js";
+import Image from "next/image";
+
+type Item = {
+  id: number;
+  title: string;
+  created_at: string;
+};
 
 export default function Home() {
-  const [items, setItems] = useState<{ id: number; title: string; created_at: string }[]>([]);
+  const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [user, setUser] = useState<User | null>(null);
+
   const [open, setOpen] = useState(false);
   const [newItem, setNewItem] = useState("");
+
   const [menuOpenIndex, setMenuOpenIndex] = useState<number | null>(null);
 
   const [isAdding, setIsAdding] = useState(false);
@@ -30,6 +42,22 @@ export default function Home() {
 
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,8 +86,15 @@ export default function Home() {
   }, [lastScrollY]);
 
   useEffect(() => {
+    if (!user) {
+      setItems([]);
+      setLoading(false);
+      return;
+    }
+
     const fetchItems = async () => {
       setLoading(true);
+
       const { data, error } = await supabase
         .from("items")
         .select("id, title, created_at")
@@ -70,11 +105,12 @@ export default function Home() {
       } else {
         setItems(data || []);
       }
+
       setLoading(false);
     };
 
     fetchItems();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -94,11 +130,18 @@ export default function Home() {
   }, [menuOpenIndex]);
 
   const addItem = async () => {
-    if (newItem.trim() === "") return;
+    if (!user || newItem.trim() === "") return;
+
     setIsAdding(true);
+
     const { data, error } = await supabase
       .from("items")
-      .insert([{ title: newItem.trim() }])
+      .insert([
+        {
+          title: newItem.trim(),
+          user_id: user.id,
+        },
+      ])
       .select("id, title, created_at");
 
     if (error) {
@@ -108,12 +151,17 @@ export default function Home() {
       setNewItem("");
       setOpen(false);
     }
+
     setIsAdding(false);
   };
 
   const removeItem = async (id: number) => {
     setDeletingId(id);
-    const { error } = await supabase.from("items").delete().eq("id", id);
+
+    const { error } = await supabase
+      .from("items")
+      .delete()
+      .eq("id", id);
 
     if (error) {
       console.error(error);
@@ -121,6 +169,7 @@ export default function Home() {
       setItems(items.filter((item) => item.id !== id));
       setMenuOpenIndex(null);
     }
+
     setDeletingId(null);
   };
 
@@ -131,7 +180,9 @@ export default function Home() {
 
   const saveEdit = async () => {
     if (!editingItem) return;
+
     setIsEditing(true);
+
     const { data, error } = await supabase
       .from("items")
       .update({ title: editingItem.title })
@@ -144,6 +195,7 @@ export default function Home() {
       setItems(items.map((it) => (it.id === editingItem.id ? data[0] : it)));
       setEditingItem(null);
     }
+
     setIsEditing(false);
   };
 
@@ -157,85 +209,121 @@ export default function Home() {
       >
         <Header />
       </motion.div>
+
       <div className="md:max-w-md w-full md:mx-auto">
       <div className="flex flex-col space-y-4 px-4 md:px-0">
-        {loading ? (
-          <LoadingOverlay />
-        ) : (
-          items.map((item, idx) => (
-            <div
-              key={item.id}
-              className="px-4 py-3 bg-slate-50 rounded-md border border-slate-100 flex flex-col relative"
+  {loading ? (
+  <LoadingOverlay />
+  ) : !user ? (
+    <div className="pt-8 mb-16 flex flex-col items-center select-none">
+      <p className="text-slate-400 text-lg font-semibold">Log in to access posts.</p>
+      <Image src="/cat.svg" alt="Cat" width={100} height={100} className="w-1/4 mt-4 opacity-30" />
+    </div>
+  ) : (
+    items.map((item, idx) => (
+      <div
+        key={item.id}
+        className="px-4 py-3 bg-slate-50 rounded-md border border-slate-100 flex flex-col relative"
+      >
+        <span className="text-sm mb-2 text-slate-400 block">
+          {formatDistanceToNow(new Date(item.created_at), {
+            addSuffix: true,
+          })}
+        </span>
+
+        <div className="prose prose-slate max-w-none">
+          <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
+            {item.title}
+          </ReactMarkdown>
+        </div>
+
+        <div
+          className="absolute top-3 right-3"
+          ref={(el) => {
+            menuRefs.current[idx] = el;
+          }}
+        >
+          <button
+            onClick={() =>
+              setMenuOpenIndex(menuOpenIndex === idx ? null : idx)
+            }
+            className="text-slate-400 outline-none focus-visible:ring-2 ring-slate-300 rounded-full"
+          >
+            <FiMoreVertical />
+          </button>
+
+          <div
+            className={`absolute right-0 top-full mt-1 w-36 bg-white border border-slate-200 rounded-md shadow-lg z-10 transform transition
+            ${
+              menuOpenIndex === idx
+                ? "opacity-100 scale-100"
+                : "opacity-0 scale-95 pointer-events-none"
+            }`}
+          >
+            <button
+              onClick={() => startEdit(item)}
+              className="w-full text-left px-4 py-2 hover:bg-slate-100"
             >
-              <div className="relative">
-                <span className="text-sm mb-2 text-slate-400 block">
-                  {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
-                </span>
+              Edit
+            </button>
 
-                <div className="prose prose-slate max-w-none">
-                  <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
-                    {item.title}
-                  </ReactMarkdown>
-                </div>
-
-                <div
-                  className="absolute top-0 right-0"
-                  ref={(el) => {
-                    menuRefs.current[idx] = el;
-                  }}
-                >
-                  <button
-                    onClick={() => setMenuOpenIndex(menuOpenIndex === idx ? null : idx)}
-                    className="mt-1 text-slate-400 outline-none focus-visible:ring-2 ring-slate-300 duration-200 rounded-full"
-                  >
-                    <FiMoreVertical />
-                  </button>
-
-                  <div
-                    className={`absolute right-0 top-full mt-1 w-36 overflow-hidden bg-white border border-slate-200 rounded-md shadow-lg z-10 transform transition duration-200 ease-out
-                    ${
-                      menuOpenIndex === idx
-                        ? "opacity-100 scale-100 pointer-events-auto"
-                        : "opacity-0 scale-95 pointer-events-none"
-                    }
-                    `}
-                  >
-                    <button
-                      onClick={() => startEdit(item)}
-                      tabIndex={menuOpenIndex === idx ? 0 : -1}
-                      className="w-full text-left px-4 py-2 hover:bg-slate-100 focus-visible:bg-slate-100 duration-200 bg-white text-slate-700 select-none outline-none"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => removeItem(item.id)}
-                      disabled={deletingId === item.id}
-                      tabIndex={menuOpenIndex === idx ? 0 : -1}
-                      className="w-full text-left px-4 py-2 hover:bg-red-50 focus-visible:bg-red-50 duration-200 bg-white text-red-600 select-none flex items-center outline-none"
-                    >
-                      {deletingId === item.id ? (
-                        <FiLoader className="animate-spin mr-2" />
-                      ) : null}
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
+            <button
+              onClick={() => removeItem(item.id)}
+              disabled={deletingId === item.id}
+              className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 flex items-center"
+            >
+              {deletingId === item.id && (
+                <FiLoader className="animate-spin mr-2" />
+              )}
+              Delete
+            </button>
+          </div>
+        </div>
       </div>
+    ))
+  )}
+</div>
 
-      <div className="w-full sticky bottom-0 bg-white py-4 px-4 md:px-0">
-        <Button variant="secondary" onClick={() => setOpen(true)} className="w-full" icon={<FiPlus className="text-slate-400" />}>
-          Add a new item
-        </Button>
-      </div>
 
-      <Footer />
+        {user && (<div className="w-full sticky bottom-0 bg-white py-4 px-4 md:px-0">
+          <Button
+            variant="secondary"
+            disabled={!user}
+            onClick={() => setOpen(true)}
+            className="w-full"
+            icon={<FiPlus className="text-slate-400" />}
+          >
+            Add a new item
+          </Button>
+        </div>)}
 
-      <Modal isOpen={open} onClose={() => setOpen(false)} title="Add New Item" value={newItem} onChange={setNewItem} onSubmit={addItem} loading={isAdding} submitLabel="Add" />
-      <Modal isOpen={!!editingItem} onClose={() => setEditingItem(null)} title="Edit Item" value={editingItem?.title || ""} onChange={(val) => setEditingItem((prev) => (prev ? { ...prev, title: val } : prev))} onSubmit={saveEdit} loading={isEditing} submitLabel="Save"/>
+        <Footer />
+
+        <Modal
+          isOpen={open}
+          onClose={() => setOpen(false)}
+          title="Add New Item"
+          value={newItem}
+          onChange={setNewItem}
+          onSubmit={addItem}
+          loading={isAdding}
+          submitLabel="Add"
+        />
+
+        <Modal
+          isOpen={!!editingItem}
+          onClose={() => setEditingItem(null)}
+          title="Edit Item"
+          value={editingItem?.title || ""}
+          onChange={(val) =>
+            setEditingItem((prev) =>
+              prev ? { ...prev, title: val } : prev
+            )
+          }
+          onSubmit={saveEdit}
+          loading={isEditing}
+          submitLabel="Save"
+        />
       </div>
     </div>
   );
