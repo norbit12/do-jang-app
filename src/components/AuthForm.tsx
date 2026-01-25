@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import Button from './ui/Button'
+import { FiLoader } from 'react-icons/fi'
 
 type Props = {
   mode: 'login' | 'signup'
@@ -66,12 +67,8 @@ export default function AuthForm({ mode, onSuccess }: Props) {
         <p className="mb-4 text-sm text-center text-red-500">{message}</p>
       )}
 
-      <Button type="submit" disabled={loading} className='w-full'>
-        {loading
-          ? 'Processing…'
-          : mode === 'login'
-          ? 'Login'
-          : 'Sign up'}
+      <Button type="submit" disabled={loading} className='w-full' icon={loading ? <FiLoader className="animate-spin" /> : undefined}>
+        {mode === 'login' ? 'Login' : 'Sign up'}
       </Button>
     </form>
   )

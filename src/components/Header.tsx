@@ -74,10 +74,10 @@ export default function Header() {
             <div className="ml-auto relative" ref={menuRef}>
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="text-slate-400 bg-slate-200 h-8 w-8 aspect-square flex items-center justify-center outline-none focus-visible:ring-2 ring-slate-200 duration-200 rounded-full"
+                className="text-slate-400 bg-slate-200 h-9 w-9 aspect-square flex items-center justify-center outline-none focus-visible:ring-2 ring-slate-200 duration-200 rounded-full"
                 aria-label="User menu"
               >
-                <FaUser className="text-base" />
+                <FaUser className="text-lg" />
               </button>
 
               <div
