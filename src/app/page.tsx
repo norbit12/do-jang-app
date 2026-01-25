@@ -228,7 +228,7 @@ export default function Home() {
                     <FiMoreVertical />
                   </button>
 
-                  <div className={`absolute right-0 top-full mt-1 w-36 bg-white border border-slate-200 rounded-md shadow-lg z-10 transform transition ${ menuOpenIndex === idx ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}>
+                  <div className={`overflow-hidden absolute right-0 top-full mt-1 w-36 bg-white border border-slate-200 rounded-md shadow-lg z-10 transform transition ${ menuOpenIndex === idx ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}>
                     <button onClick={() => startEdit(item)} className="w-full text-left px-4 py-2 hover:bg-slate-100">
                       Edit
                     </button>
