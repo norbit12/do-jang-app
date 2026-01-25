@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-import { Inter, Noto_Sans_JP } from 'next/font/google';
+import { Inter, Noto_Sans_JP, Nanum_Gothic } from 'next/font/google';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -14,6 +14,14 @@ const notoJP = Noto_Sans_JP({
   variable: '--font-noto-jp',
   display: 'swap',
 });
+
+const nanumGothic = Nanum_Gothic({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-nanum-gothic',
+  display: 'swap',
+});
+
 
 export const metadata: Metadata = {
   title: "DoJang",
@@ -43,7 +51,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${notoJP.variable}`}>{children}</body>
+      <body className={`${inter.variable} ${nanumGothic.variable} ${notoJP.variable}`}>{children}</body>
     </html>
   );
 }

@@ -11,7 +11,7 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-inter), var(--font-noto-jp), Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), var(--font-nanum-gothic), var(--font-noto-jp), Arial, Helvetica, sans-serif;
 }
 
 .header-logo {
