@@ -201,129 +201,54 @@ export default function Home() {
 
   return (
     <div>
-      <motion.div
-        initial={{ y: 0 }}
-        animate={{ y: showHeader ? 0 : "-100%" }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="sticky top-0 z-50"
-      >
+      <motion.div initial={{ y: 0 }} animate={{ y: showHeader ? 0 : "-100%" }} transition={{ duration: 0.3, ease: "easeInOut" }} className="sticky top-0 z-50">
         <Header />
       </motion.div>
 
       <div className="md:max-w-md w-full md:mx-auto">
-      <div className="flex flex-col space-y-4 px-4 md:px-0">
-  {loading ? (
-  <LoadingOverlay />
-  ) : !user ? (
-    <div className="pt-8 mb-16 flex flex-col items-center select-none">
-      <p className="text-slate-400 text-lg font-semibold">Log in to access posts.</p>
-      <Image src="/cat.svg" alt="Cat" width={100} height={100} className="w-1/4 mt-4 opacity-30" />
-    </div>
-  ) : (
-    items.map((item, idx) => (
-      <div
-        key={item.id}
-        className="px-4 py-3 bg-slate-50 rounded-md border border-slate-100 flex flex-col relative"
-      >
-        <span className="text-sm mb-2 text-slate-400 block">
-          {formatDistanceToNow(new Date(item.created_at), {
-            addSuffix: true,
-          })}
-        </span>
+        <div className="flex flex-col space-y-4 px-4 md:px-0">
+          {loading ? (
+            <LoadingOverlay />
+          ) : !user ? (
+            <div className="pt-8 mb-16 flex flex-col items-center select-none">
+              <p className="text-slate-400 text-lg font-semibold opacity-80">Log in to access posts.</p>
+              <Image src="/cat.svg" alt="Cat" width={100} height={100} className="w-1/4 mt-4 opacity-30" />
+            </div>
+          ) : (
+            items.map((item, idx) => (
+              <div key={item.id} className="px-4 py-3 bg-slate-50 rounded-md border border-slate-100 flex flex-col relative">
+                <span className="text-sm mb-2 text-slate-400 block">{formatDistanceToNow(new Date(item.created_at), {addSuffix: true,})}</span>
 
-        <div className="prose prose-slate max-w-none">
-          <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
-            {item.title}
-          </ReactMarkdown>
+                <div className="prose prose-slate max-w-none">
+                  <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{item.title}</ReactMarkdown>
+                </div>
+
+                <div className="absolute top-3 right-3" ref={(el) => {menuRefs.current[idx] = el;}}>
+                  <button onClick={() => setMenuOpenIndex(menuOpenIndex === idx ? null : idx)} className="text-slate-400 outline-none focus-visible:ring-2 ring-slate-300 rounded-full">
+                    <FiMoreVertical />
+                  </button>
+
+                  <div className={`absolute right-0 top-full mt-1 w-36 bg-white border border-slate-200 rounded-md shadow-lg z-10 transform transition ${ menuOpenIndex === idx ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}>
+                    <button onClick={() => startEdit(item)} className="w-full text-left px-4 py-2 hover:bg-slate-100">
+                      Edit
+                    </button>
+
+                    <button onClick={() => removeItem(item.id)} disabled={deletingId === item.id} className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 flex items-center">
+                      {deletingId === item.id && (<FiLoader className="animate-spin mr-2" />)}Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
-
-        <div
-          className="absolute top-3 right-3"
-          ref={(el) => {
-            menuRefs.current[idx] = el;
-          }}
-        >
-          <button
-            onClick={() =>
-              setMenuOpenIndex(menuOpenIndex === idx ? null : idx)
-            }
-            className="text-slate-400 outline-none focus-visible:ring-2 ring-slate-300 rounded-full"
-          >
-            <FiMoreVertical />
-          </button>
-
-          <div
-            className={`absolute right-0 top-full mt-1 w-36 bg-white border border-slate-200 rounded-md shadow-lg z-10 transform transition
-            ${
-              menuOpenIndex === idx
-                ? "opacity-100 scale-100"
-                : "opacity-0 scale-95 pointer-events-none"
-            }`}
-          >
-            <button
-              onClick={() => startEdit(item)}
-              className="w-full text-left px-4 py-2 hover:bg-slate-100"
-            >
-              Edit
-            </button>
-
-            <button
-              onClick={() => removeItem(item.id)}
-              disabled={deletingId === item.id}
-              className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 flex items-center"
-            >
-              {deletingId === item.id && (
-                <FiLoader className="animate-spin mr-2" />
-              )}
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    ))
-  )}
-</div>
-
 
         {user && (<div className="w-full sticky bottom-0 bg-white py-4 px-4 md:px-0">
-          <Button
-            variant="secondary"
-            disabled={!user}
-            onClick={() => setOpen(true)}
-            className="w-full"
-            icon={<FiPlus className="text-slate-400" />}
-          >
-            Add a new item
-          </Button>
+          <Button variant="secondary" disabled={!user} onClick={() => setOpen(true)} className="w-full" icon={<FiPlus className="text-slate-400" />}>Add a new item</Button>
         </div>)}
-
         <Footer />
-
-        <Modal
-          isOpen={open}
-          onClose={() => setOpen(false)}
-          title="Add New Item"
-          value={newItem}
-          onChange={setNewItem}
-          onSubmit={addItem}
-          loading={isAdding}
-          submitLabel="Add"
-        />
-
-        <Modal
-          isOpen={!!editingItem}
-          onClose={() => setEditingItem(null)}
-          title="Edit Item"
-          value={editingItem?.title || ""}
-          onChange={(val) =>
-            setEditingItem((prev) =>
-              prev ? { ...prev, title: val } : prev
-            )
-          }
-          onSubmit={saveEdit}
-          loading={isEditing}
-          submitLabel="Save"
-        />
+        <Modal isOpen={open} onClose={() => setOpen(false)} title="Add New Item" value={newItem} onChange={setNewItem} onSubmit={addItem} loading={isAdding} submitLabel="Add" />
+        <Modal isOpen={!!editingItem} onClose={() => setEditingItem(null)} title="Edit Item" value={editingItem?.title || ""} onChange={(val) => setEditingItem((prev) => prev ? { ...prev, title: val } : prev)} onSubmit={saveEdit} loading={isEditing} submitLabel="Save" />
       </div>
     </div>
   );
