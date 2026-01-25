@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import AuthForm from './AuthForm'
 import { FiX } from 'react-icons/fi'

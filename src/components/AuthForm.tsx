@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import Button from './ui/Button'
@@ -45,23 +44,13 @@ export default function AuthForm({ mode, onSuccess }: Props) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input
-        type="email"
-        placeholder="Email"
+      <input type="email" placeholder="Email"
         className="mb-2 w-full border rounded-md px-4 py-2 border-slate-200 placeholder:text-slate-400 outline-none focus:border-slate-400 focus:ring-4 ring-slate-200 duration-200"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
+        value={email} onChange={(e) => setEmail(e.target.value)} required/>
 
-      <input
-        type="password"
-        placeholder="Password"
+      <input type="password" placeholder="Password"
         className="mb-4 w-full border rounded-md px-4 py-2 border-slate-200 placeholder:text-slate-400 outline-none focus:border-slate-400 focus:ring-4 ring-slate-200 duration-200"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
+        value={password} onChange={(e) => setPassword(e.target.value)} required/>
 
       {message && (
         <p className="mb-4 text-sm text-center text-red-500">{message}</p>

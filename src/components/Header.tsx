@@ -58,13 +58,7 @@ export default function Header() {
       <div className="flex sticky top-0 z-50 px-4 md:px-0 h-20 bg-white">
         <div className="md:max-w-md w-full md:mx-auto flex items-center relative">
           <Link href="/" className="flex items-center w-fit">
-            <Image
-              src="/logo.svg"
-              alt="Logo"
-              width={100}
-              height={100}
-              className="w-8 select-none"
-            />
+            <Image src="/logo.svg" alt="Logo" width={100} height={100} className="w-8 select-none"/>
             <h1 className="font-bold text-2xl ml-2 header-logo text-black">
               DoJang
             </h1>
@@ -72,11 +66,7 @@ export default function Header() {
 
           {userEmail ? (
             <div className="ml-auto relative" ref={menuRef}>
-              <button
-                onClick={() => setMenuOpen(!menuOpen)}
-                className="text-slate-400 bg-slate-200 h-9 w-9 aspect-square flex items-center justify-center outline-none focus-visible:ring-2 ring-slate-200 duration-200 rounded-full"
-                aria-label="User menu"
-              >
+              <button onClick={() => setMenuOpen(!menuOpen)} className="text-slate-300 bg-slate-100 h-9 aspect-square flex items-center justify-center outline-none focus-visible:ring-2 ring-slate-200 duration-200 rounded-full" aria-label="User menu">
                 <FaUser className="text-lg" />
               </button>
 
