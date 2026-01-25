@@ -71,7 +71,7 @@ export default function Header() {
               </button>
 
               <div
-                className={`absolute right-0 top-full mt-1 w-42 overflow-hidden bg-white border border-slate-200 rounded-md shadow-lg z-10 transform transition duration-200 ease-out
+                className={`absolute right-0 top-full mt-1 w-44 overflow-hidden bg-white border border-slate-200 rounded-md shadow-lg z-10 transform transition duration-200 ease-out
                 ${
                   menuOpen
                     ? "opacity-100 scale-100 pointer-events-auto"
@@ -80,7 +80,7 @@ export default function Header() {
                 `}
               >
                 <div className="px-4 py-2 text-sm text-slate-700 border-b border-slate-100">
-                  <p>{userEmail}</p>
+                  <p>You&apos;re currently logged in to {userEmail?.split("@")[0]}.</p>
                 </div>
                 <button
                   onClick={handleLogout}
