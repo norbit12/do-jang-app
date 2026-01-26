@@ -17,3 +17,8 @@ body {
 .header-logo {
   font-family: "Righteous", sans-serif;
 }
+
+::selection {
+  background-color: #e2e8f0;
+  color: #334155;
+}

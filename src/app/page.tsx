@@ -11,7 +11,6 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import Footer from "@/components/Footer";
-import LoadingOverlay from "@/components/LoadingOverlay";
 import type { User } from "@supabase/supabase-js";
 import Image from "next/image";
 
@@ -23,7 +22,6 @@ type Item = {
 
 export default function Home() {
   const [items, setItems] = useState<Item[]>([]);
-  const [loading, setLoading] = useState(true);
 
   const [user, setUser] = useState<User | null>(null);
 
@@ -88,12 +86,10 @@ export default function Home() {
   useEffect(() => {
     if (!user) {
       setItems([]);
-      setLoading(false);
       return;
     }
 
     const fetchItems = async () => {
-      setLoading(true);
 
       const { data, error } = await supabase
         .from("items")
@@ -106,7 +102,6 @@ export default function Home() {
         setItems(data || []);
       }
 
-      setLoading(false);
     };
 
     fetchItems();
@@ -207,9 +202,7 @@ export default function Home() {
 
       <div className="md:max-w-md w-full md:mx-auto">
         <div className="flex flex-col space-y-4 px-4 md:px-0">
-          {loading ? (
-            <LoadingOverlay />
-          ) : !user ? (
+          {!user ? (
             <div className="pt-8 mb-16 flex flex-col items-center select-none">
               <p className="text-slate-400 text-lg font-semibold opacity-80">Log in to access posts.</p>
               <Image src="/cat.svg" alt="Cat" width={100} height={100} className="w-1/4 mt-4 opacity-30" />

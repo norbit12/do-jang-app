@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     siteName: "DoJang",
     images: [
       {
-        url: "https://raw.githubusercontent.com/ethan-mason/do-jang-app/refs/heads/main/public/ogimage.png",
+        url: "https://raw.githubusercontent.com/norbit12/do-jang-app/refs/heads/main/public/ogimage.png",
         width: 1200,
         height: 630,
         alt: "DoJang - Your ultimate task master!",
