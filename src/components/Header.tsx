@@ -79,8 +79,8 @@ export default function Header() {
                 }
                 `}
               >
-                <div className="px-4 py-2 text-sm text-slate-700 border-b border-slate-100">
-                  <p>You&apos;re currently logged in to {userEmail?.split("@")[0]}.</p>
+                <div className="px-4 py-2 border-b border-slate-100">
+                  <p className="text-slate-600 text-sm">You&apos;re currently logged in to {userEmail?.split("@")[0]}.</p>
                 </div>
                 <button
                   onClick={handleLogout}
