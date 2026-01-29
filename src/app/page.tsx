@@ -237,7 +237,7 @@ export default function Home() {
         </div>
 
         {user && (<div className="w-full sticky bottom-0 bg-white py-4 px-4 md:px-0">
-          <Button variant="secondary" disabled={!user} onClick={() => setOpen(true)} className="w-full" icon={<FiPlus className="text-slate-400" />}>Add a new item</Button>
+          <Button variant="secondary" disabled={!user} onClick={() => setOpen(true)} className="w-full shadow-sm" icon={<FiPlus className="text-slate-400" />}>Add a new item</Button>
         </div>)}
         <Footer />
         <Modal isOpen={open} onClose={() => setOpen(false)} title="Add New Item" value={newItem} onChange={setNewItem} onSubmit={addItem} loading={isAdding} submitLabel="Add" />
